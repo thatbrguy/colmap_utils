@@ -1,0 +1,14 @@
+basedir: /path/to/base/dir
+db_name: database.db
+log_file_name: colmap_output.txt
+img_folder_name: images
+sparse_folder_name: sparse
+
+feature_extractor:
+  ImageReader.single_camera: '1'
+
+mapper:
+  Mapper.num_threads: '16'
+  Mapper.init_min_tri_angle: '4'
+  Mapper.multiple_models: '0'
+  Mapper.extract_colors: '0'
