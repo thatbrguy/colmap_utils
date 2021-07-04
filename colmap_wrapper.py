@@ -18,6 +18,9 @@ def run_colmap(params):
     """
     Runs colmap
     """
+    print("=" * 80)
+    print("[*] Entered function run_colmap.")
+
     basedir = params.basedir
 
     db_path = os.path.join(basedir, params.db_name)
@@ -37,9 +40,7 @@ def run_colmap(params):
     additional_args = get_additional_args(params.feature_extractor)
     feature_extractor_args += additional_args
 
-    ## TODO: Are paranthesis needed?
-    feat_output = (subprocess.check_output(feature_extractor_args, universal_newlines=True))
-
+    feat_output = subprocess.check_output(feature_extractor_args, universal_newlines=True)
     print("[*] feature_extractor has finished execution.")
 
     ## Exhaustive Matching
@@ -47,9 +48,7 @@ def run_colmap(params):
         "colmap", "exhaustive_matcher", "--database_path", db_path
     ]
 
-    ## TODO: Are paranthesis needed?
-    match_output = (subprocess.check_output(exhaustive_matcher_args, universal_newlines=True))
-
+    match_output = subprocess.check_output(exhaustive_matcher_args, universal_newlines=True)
     print("[*] exhaustive_matcher has finished execution.")
 
     ## Mapping
@@ -61,14 +60,15 @@ def run_colmap(params):
     additional_args = get_additional_args(params.mapper)
     mapper_args += additional_args
 
-    ## TODO: Are paranthesis needed?
-    map_output = (subprocess.check_output(mapper_args, universal_newlines=True))
-
+    map_output = subprocess.check_output(mapper_args, universal_newlines=True)
     print("[*] mapper has finished execution.")
 
     ## Writing to log file.
     with open(logfile_path, "w") as logfile:
         logfile.write(feat_output)
+        logfile.write(match_output)
         logfile.write(map_output)
 
     print("[*] Finished writing to log file.")
+    print("[*] Exiting function run_colmap.")
+    print("=" * 80)

@@ -1,8 +1,12 @@
-basedir: /path/to/base/dir
+basedir: ../data
 db_name: database.db
 log_file_name: colmap_output.txt
 img_folder_name: images
 sparse_folder_name: sparse
+
+# If you set disable_run_colmap to True, the function run_colmap will 
+# not be executed in the function extract_poses in create_poses.py
+disable_run_colmap: True
 
 feature_extractor:
   ImageReader.single_camera: '1'
@@ -12,3 +16,6 @@ mapper:
   Mapper.init_min_tri_angle: '4'
   Mapper.multiple_models: '0'
   Mapper.extract_colors: '0'
+
+poses:
+  calculate_bounds: True
