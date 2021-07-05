@@ -58,11 +58,28 @@ def extract_poses(params):
         points_visibility.append(point_visibility)
         points.append(points3D[key].xyz)
 
+    # Shape of points --> (P, 3)
     points = np.array(points)
-    all_points_visibility = np.array(all_points_visibility)
+    # Shape of points_visibility --> (P, I)
+    points_visibility = np.array(points_visibility)
 
-    import pdb; pdb.set_trace()  # breakpoint 465458f8 //
+    ## TODO: Implmement vectorized equivalent.
+    ## TODO: Fill out placeholders, verify signages and complete implmementation.
+    z_projs = []
+    for point in points:
+        
+        z_projs_per_point = []
+        for pose in c2w_mats:
+            # Shape of point --> (3,)
+            # Shape of pose --> (4, 4)
+            z_basis = pose[:3, 2]
+            translation = pose[:3, 3]
 
+            import pdb; pdb.set_trace()  # breakpoint 896ff493 //
+            # z_projection = ... # TODO!
+            z_projs_per_point.append(z_projection)
+
+        z_projs.append(z_projs_per_point)
 
 if __name__ == '__main__':
 
