@@ -34,9 +34,32 @@ def extract_poses(params):
 
         w2c_mats.append(RT)
 
-    # Shape of w2c_mats and c2w_mats is (N, 4, 4)
+    # Shape of w2c_mats and c2w_mats is (I, 4, 4), where I is 
+    # the number of images.
     w2c_mats = np.array(w2c_mats)
     c2w_mats = np.linalg.inv(w2c_mats)
+
+    img_keys = list(images.keys())
+    img_key_to_idx = {key:idx for idx, key in enumerate(img_keys)}
+
+    points = []
+    points_visibility = []
+
+    for key in points3D:
+        # point_visibility is 1 if a point is visible in an 
+        # image, 0 if not. The dict img_key_to_idx maps an 
+        # image key to an index in the point_visibility array.
+        point_visibility = [0] * len(img_keys)
+        for img_key in points3D[key].image_ids:
+            point_visibility[img_key_to_idx[img_key]] = 1
+
+        # points_visibility contains the visibility
+        # information of all the points.
+        points_visibility.append(point_visibility)
+        points.append(points3D[key].xyz)
+
+    points = np.array(points)
+    all_points_visibility = np.array(all_points_visibility)
 
     import pdb; pdb.set_trace()  # breakpoint 465458f8 //
 
