@@ -64,22 +64,25 @@ def extract_poses(params):
     points_visibility = np.array(points_visibility)
 
     ## TODO: Implmement vectorized equivalent.
-    ## TODO: Fill out placeholders, verify signages and complete implmementation.
+    ## TODO: Verify calculation!
     z_projs = []
     for point in points:
         
         z_projs_per_point = []
         for pose in c2w_mats:
             # Shape of point --> (3,)
+            # Shape of translation --> (3,)
             # Shape of pose --> (4, 4)
             z_basis = pose[:3, 2]
             translation = pose[:3, 3]
 
-            import pdb; pdb.set_trace()  # breakpoint 896ff493 //
-            # z_projection = ... # TODO!
+            z_projection = z_basis @ (point - translation)
             z_projs_per_point.append(z_projection)
 
         z_projs.append(z_projs_per_point)
+
+    z_projs = np.array(z_projs)
+    import pdb; pdb.set_trace()  # breakpoint 4b8694e0 //
 
 if __name__ == '__main__':
 
