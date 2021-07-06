@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 from colmap_wrapper import run_colmap
 from read_write_model import read_model
@@ -34,7 +35,7 @@ def extract_poses(params):
 
         w2c_mats.append(RT)
 
-    # Shape of w2c_mats and c2w_mats is (I, 4, 4), where I is 
+    # Shape of w2c_mats and c2w_mats is (M, 4, 4), where M is 
     # the number of images.
     w2c_mats = np.array(w2c_mats)
     c2w_mats = np.linalg.inv(w2c_mats)
@@ -60,17 +61,17 @@ def extract_poses(params):
 
     # Shape of points --> (P, 3)
     points = np.array(points)
-    # Shape of points_visibility --> (P, I)
+    # Shape of points_visibility --> (P, M)
     points_visibility = np.array(points_visibility)
 
     ## TODO: Implmement vectorized equivalent.
     ## TODO: Verify calculation!
     
-    # Shape of z_projs --> (P, I)
-    z_projs = calculate_z_projs(points, c2w_mats)
-    # z_projs = calculate_z_projs_vectorized(points, c2w_mats)
+    # Shape of z_projs --> (P, M)
+    z_projs = calculate_z_projs_vectorized(points, c2w_mats)
+
+    import pdb; pdb.set_trace()  # breakpoint 2075fa58 //
     
-    import pdb; pdb.set_trace()  # breakpoint 4b8694e0 //
 
 def calculate_z_projs_vectorized(points, c2w_mats):
     """
@@ -79,7 +80,19 @@ def calculate_z_projs_vectorized(points, c2w_mats):
     Same functionality as of calculate_z_projs but this 
     uses vectorized operations. TODO: Elaborate if needed.
     """
-    pass
+    # Shape of z_basis_vecs --> (1, M, 3)
+    z_basis_vecs = c2w_mats[np.newaxis, :, :3, 2]
+
+    # Shape of t_vecs --> (1, M, 3)
+    t_vecs = c2w_mats[np.newaxis, :, :3, 3]
+
+    # Shape of points_ --> (P, 1, 3)
+    points_ = points[:, np.newaxis, :]
+
+    # Shape of z_projs --> (P, M)
+    z_projs = np.sum((z_basis_vecs * (points_ - t_vecs)), axis = -1)
+
+    return z_projs
 
 def calculate_z_projs(points, c2w_mats):
     """
