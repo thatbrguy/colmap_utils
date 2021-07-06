@@ -8,6 +8,9 @@ sparse_folder_name: sparse
 # not be executed in the function extract_poses in create_poses.py
 disable_run_colmap: True
 
+# Path to the output file.
+output_path: ../pose_info.csv
+
 feature_extractor:
   ImageReader.single_camera: '1'
 

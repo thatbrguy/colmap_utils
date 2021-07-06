@@ -1,8 +1,11 @@
 import os
-import time
 import numpy as np
+import pandas as pd
+
 from colmap_wrapper import run_colmap
 from read_write_model import read_model
+
+from collections import defaultdict
 
 def extract_poses(params):
     """
@@ -13,7 +16,7 @@ def extract_poses(params):
     if not params.disable_run_colmap:
         run_colmap(params)
 
-    data = {}
+    data = defaultdict(list)
     path = os.path.join(params.basedir, "sparse", "0")
     cameras, images, points3D = read_model(path, ext = ".bin")
 
@@ -46,6 +49,7 @@ def extract_poses(params):
     points = []
     points_visibility = []
 
+    # TODO: Re-read colmap docs to verify info and logic about visibility.
     for key in points3D:
         # point_visibility is 1 if a point is visible in an 
         # image, 0 if not. The dict img_key_to_idx maps an 
@@ -63,15 +67,44 @@ def extract_poses(params):
     points = np.array(points)
     # Shape of points_visibility --> (P, M)
     points_visibility = np.array(points_visibility)
-
-    ## TODO: Implmement vectorized equivalent.
-    ## TODO: Verify calculation!
     
     # Shape of z_projs --> (P, M)
     z_projs = calculate_z_projs_vectorized(points, c2w_mats)
 
-    import pdb; pdb.set_trace()  # breakpoint 2075fa58 //
-    
+    for key in images:
+        img = images[key]
+        idx = img_key_to_idx[key]
+
+        camera_id = img.camera_id
+
+        # Shape of vis_array --> (P,)
+        vis_array = points_visibility[:, idx]
+        # Shape of z_vals --> (P,)
+        z_vals = z_projs[:, idx]
+
+        valid_z = z_vals[vis_array == 1]
+        near, far = np.percentile(valid_z, 0.1), np.percentile(valid_z, 99.9)
+
+        pose_flattened = c2w_mats[idx, :3, :].flatten().tolist()
+        img_name = img.name
+        camera_model = cameras[camera_id].model
+        camera_params = cameras[camera_id].params.flatten().tolist()
+
+        data["image_name"].append(img_name)
+        data["camera_model"].append(camera_model)
+        data["camera_params"].append(str(camera_params))
+        data["pose"].append(str(pose_flattened))
+        data["near"].append(near)
+        data["far"].append(far)
+
+    df = pd.DataFrame(data)
+
+    # Rearranging columns for consistency.
+    df = df[[
+        "image_name", "camera_model", "camera_params",
+        "pose", "near", "far",
+    ]]
+    df.to_csv(params.output_path, index = False)
 
 def calculate_z_projs_vectorized(points, c2w_mats):
     """
