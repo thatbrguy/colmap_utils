@@ -65,6 +65,26 @@ def extract_poses(params):
 
     ## TODO: Implmement vectorized equivalent.
     ## TODO: Verify calculation!
+    
+    # Shape of z_projs --> (P, I)
+    z_projs = calculate_z_projs(points, c2w_mats)
+    # z_projs = calculate_z_projs_vectorized(points, c2w_mats)
+    
+    import pdb; pdb.set_trace()  # breakpoint 4b8694e0 //
+
+def calculate_z_projs_vectorized(points, c2w_mats):
+    """
+    TODO: Docstring!
+
+    Same functionality as of calculate_z_projs but this 
+    uses vectorized operations. TODO: Elaborate if needed.
+    """
+    pass
+
+def calculate_z_projs(points, c2w_mats):
+    """
+    TODO: Docstring!
+    """
     z_projs = []
     for point in points:
         
@@ -82,7 +102,8 @@ def extract_poses(params):
         z_projs.append(z_projs_per_point)
 
     z_projs = np.array(z_projs)
-    import pdb; pdb.set_trace()  # breakpoint 4b8694e0 //
+    
+    return z_projs
 
 if __name__ == '__main__':
 
