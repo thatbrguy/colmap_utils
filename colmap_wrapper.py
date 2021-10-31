@@ -1,9 +1,11 @@
-## This code is a slightly modified version of 
-## colmap_wrapper.py from https://github.com/Fyusion/LLFF
+"""
+This code is a slightly modified version of 
+colmap_wrapper.py from https://github.com/Fyusion/LLFF
+"""
 import os
 import subprocess
 
-def get_additional_args(dict_):
+def _get_additional_args(dict_):
     """
     Gets additional args from the given dictionary.
     """
@@ -29,7 +31,7 @@ def run_colmap(params):
     sparse_folder_path = os.path.join(basedir, params.sparse_folder_name)
 
     if not os.path.exists(sparse_folder_path):
-        os.makedirs(sparse_folder_path)
+        os.makedirs(sparse_folder_path, exist_ok = True)
 
     ## Feature Extraction
     feature_extractor_args = [
@@ -37,7 +39,7 @@ def run_colmap(params):
         "--database_path", db_path, "--image_path", img_folder_path,
     ]
 
-    additional_args = get_additional_args(params.feature_extractor)
+    additional_args = _get_additional_args(params.feature_extractor)
     feature_extractor_args += additional_args
 
     feat_output = subprocess.check_output(feature_extractor_args, universal_newlines=True)
@@ -57,7 +59,7 @@ def run_colmap(params):
         "--image_path", img_folder_path, "--output_path", sparse_folder_path,
     ]
 
-    additional_args = get_additional_args(params.mapper)
+    additional_args = _get_additional_args(params.mapper)
     mapper_args += additional_args
 
     map_output = subprocess.check_output(mapper_args, universal_newlines=True)

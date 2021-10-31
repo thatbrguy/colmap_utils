@@ -1,24 +1,26 @@
-basedir: ../data
-db_name: database.db
-log_file_name: colmap_output.txt
-img_folder_name: images
-sparse_folder_name: sparse
+# Paths and names
+basedir: "../colmap_basedir"
+db_name: "database.db"
+log_file_name: "colmap_logs.txt"
+img_folder_name: "images"
+sparse_folder_name: "sparse"
 
-# If you set disable_run_colmap to True, the function run_colmap will 
-# not be executed in the function extract_poses in create_poses.py
-disable_run_colmap: True
+# If you set do_not_run_colmap to True, the function run_colmap will not be executed 
+# in the function extract_and_save_metadata in create_poses.py
+do_not_run_colmap: True
 
 # Path to the output file.
-output_path: ../pose_info.csv
+output_path: "../colmap_basedir/pose_info.csv"
 
+# Additional arguments that can be sent to colmap feature_extractor. 
+# The values of the arguments must be strings.
 feature_extractor:
   ImageReader.single_camera: '1'
 
+# Additional arguments that can be sent to colmap feature_extractor. 
+# The values of the arguments must be strings.
 mapper:
   Mapper.num_threads: '16'
   Mapper.init_min_tri_angle: '4'
   Mapper.multiple_models: '0'
   Mapper.extract_colors: '0'
-
-poses:
-  calculate_bounds: True
