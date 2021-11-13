@@ -7,19 +7,19 @@ sparse_folder_name: "sparse"
 
 # If you set do_not_run_colmap to True, the function run_colmap will not be executed 
 # in the function extract_and_save_metadata in create_poses.py
-do_not_run_colmap: True
+do_not_run_colmap: False
 
 # Path to the output file.
 output_path: "../colmap_basedir/pose_info.csv"
 
 # Additional arguments that can be sent to colmap feature_extractor. 
-# The values of the arguments must be strings.
 feature_extractor:
+  # The values of these arguments must be strings.
   ImageReader.single_camera: '1'
 
 # Additional arguments that can be sent to colmap feature_extractor. 
-# The values of the arguments must be strings.
 mapper:
+  # The values of these arguments must be strings.
   Mapper.num_threads: '16'
   Mapper.init_min_tri_angle: '4'
   Mapper.multiple_models: '0'

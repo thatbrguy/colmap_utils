@@ -124,9 +124,10 @@ def extract_and_save_metadata(params):
 
 def calculate_z_projs_vectorized(points, c2w_mats):
     """
-    Please refer to the document z_projs_explanation.md for 
-    information about this function. This function essentially 
-    is a vectorized version of calculate_z_projs.
+    This function calculates z_projs in a vectorized fashion.
+    
+    Please refer to the function calculate_z_projs for an explanation
+    about z_projs
 
     Args:
         points      :   A np.ndarray of shape (P, 3) where P 
@@ -153,8 +154,35 @@ def calculate_z_projs_vectorized(points, c2w_mats):
 
 def calculate_z_projs(points, c2w_mats):
     """
-    Please refer to the document z_projs_explanation.md for 
-    information about this function. 
+    This function calculates z_projs. It is recommended to use
+    calculate_z_projs_vectorized since that function can calculate z_projs
+    in a vectorized manner.
+    
+    ==========================
+    Explanation about z_projs
+    ==========================
+
+    Let us first consider a single point "A" in the world coordinate system. 
+    Let us assume there is a camera coordinate system "C" whose origin is located 
+    at the point "T" in the world coordinate system. The vector starting from 
+    T and ending at A is given by A-T. Let us call this new vector "TA" 
+    (i.e. TA = A-T). We are interested in computing the "scalar projection" 
+    (https://en.wikipedia.org/wiki/Scalar_projection) of this vector TA onto 
+    the unit vector representing the Z-direction of this camera coordinate system 
+    in the world coordinate system. Let us call this scalar projection the z_proj 
+    for this point "A" and for this camera coordinate system "C".
+
+    Now, if there are "M" camera coordinate systems, we can compute the z_proj of 
+    this point "A" for each of the "M" camera coordinate systems.
+
+    Now, in addition to "M" camera coordinate systems, if there are "P" points, we 
+    can repeat the procedure mentioned above for all points (i.e. compute the 
+    z_proj for each point for each camera).
+
+    If we collect the z_proj values for the case above, we would end up with 
+    "M" values for each point (since we calculated a z_proj value for each of 
+    the "M" cameras for each point). Hence, we can represent the z_proj values 
+    for all "P" points in a 2D array of shape (P, M).
 
     Args:
         points      :   A np.ndarray of shape (P, 3) where P 
